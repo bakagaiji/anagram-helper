@@ -34,7 +34,7 @@ function splitPhrase(text: string, merge: boolean): string[] {
   // 小文字を直前の文字と結合する
   const result: string[] = [];
   for (let i = 0; i < chars.length; i++) {
-    if (/[ゃゅょぁぃぅぇぉっ]/.test(chars[i]) && result.length > 0) {
+    if (/[ゃゅょぁぃぅぇぉ]/.test(chars[i]) && result.length > 0) {
       // 小文字なので直前の文字と結合
       result[result.length - 1] += chars[i];
     } else {
@@ -52,6 +52,7 @@ export default function Home() {
   const [phrase, setPhrase] = useState<string[]>([]);
   const [cursor, setCursor] = useState(0);
   const [mergeSmallChars, setMergeSmallChars] = useState(false);
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [candidates, setCandidates] = useState<SavedCandidate[]>([]);
   const [mounted, setMounted] = useState(false);
 
@@ -65,6 +66,14 @@ export default function Home() {
         console.error("Failed to load candidates:", e);
       }
     }
+
+    const updateIsSmallScreen = () => {
+      setIsSmallScreen(window.innerWidth <= 768);
+    };
+
+    updateIsSmallScreen();
+    window.addEventListener("resize", updateIsSmallScreen);
+    return () => window.removeEventListener("resize", updateIsSmallScreen);
   }, []);
 
   useEffect(() => {
@@ -232,22 +241,30 @@ export default function Home() {
 
         {/* カーソル表示 */}
         <div className="mb-4 p-3 bg-blue-50 rounded font-mono text-lg">
-          {phrase.map((char, index) => (
-            <span key={index}>
-              <span
-                onClick={() => setCursor(index)}
-                className="inline-block px-1 cursor-pointer hover:bg-blue-200 rounded"
-                title="クリックしてカーソル位置を変更"
-              >
-                {char}
-              </span>
-              {cursor === index + 1 && (
+          {isSmallScreen ? (
+            <div className="text-sm text-gray-700">
+              スマホではカーソル位置の直接指定を無効にしています。
+            </div>
+          ) : (
+            <div className="flex flex-wrap gap-0">
+              {phrase.map((char, index) => (
+                <span key={index}>
+                  <span
+                    onClick={() => setCursor(index)}
+                    className="inline-block px-1 cursor-pointer hover:bg-blue-200 rounded"
+                    title="クリックしてカーソル位置を変更"
+                  >
+                    {char}
+                  </span>
+                  {cursor === index + 1 && (
+                    <span className="inline-block bg-orange-400 w-1 h-6 ml-1 animate-pulse"></span>
+                  )}
+                </span>
+              ))}
+              {cursor === phrase.length && (
                 <span className="inline-block bg-orange-400 w-1 h-6 ml-1 animate-pulse"></span>
               )}
-            </span>
-          ))}
-          {cursor === phrase.length && (
-            <span className="inline-block bg-orange-400 w-1 h-6 ml-1 animate-pulse"></span>
+            </div>
           )}
         </div>
 
