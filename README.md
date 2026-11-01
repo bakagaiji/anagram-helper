@@ -1,36 +1,31 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 日本語アナグラム作成支援くん
 
-## Getting Started
+ひらがな・カタカナの文字を選び、並べ替えてアナグラムを作るツールです。
 
-First, run the development server:
+1. 元の語句と小文字結合の設定を選び、「この語句で始める」を押します。
+2. 残り文字を押すと、選択中の挿入位置に入ります。文字の間や◀・▶で位置を変えられます。
+3. 作成中の文字を押すと残り文字へ戻せます。「元に戻す／やり直す」は最大100操作分です。
+4. 候補は元の語句と設定を含めて、このブラウザに保存できます。作業途中の自動保存ではありません。
+5. コピーできないブラウザでは文章欄を選択して手動でコピーします。
 
-```bash
+候補の保存領域は端末・ブラウザ・公開URLごとに別です。プレビューで本番の候補が表示されないのは正常です。旧形式の候補も読み込めますが、保存されていない元の語句の順番は補完表示になります。
+
+## 開発
+
+```sh
+npm ci
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 確認
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```sh
+npm run lint
+npx tsc --noEmit
+node --test tests/anagram.test.mjs
+npm run build
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+テストにはNode.js 22.18以降または24を使用します。
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+[改修前への復元手順](docs/rollback.md)
